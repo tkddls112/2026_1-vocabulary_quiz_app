@@ -10,6 +10,7 @@ from vocabulary_quiz_app.quiz_logic import Word, check_answer, draw_word
 
 class VocabularyQuizApp:
     def __init__(self, root: tk.Tk, words: list[Word]) -> None:
+        self.root = root
         self.words = words
         self.rng = random.Random()
         self.current: Word | None = None
@@ -28,7 +29,7 @@ class VocabularyQuizApp:
         self.feedback_var = tk.StringVar(value="")
         self.score_var = tk.StringVar(value="Score: 0/0")
 
-        ttk.Label(root, text="영단어").pack(pady=(16, 4))
+        ttk.Label(root, text="영단어 20문제를 맞추면 자동으로 프로그램이 종료됩니다.").pack(pady=(16, 4))
         ttk.Label(root, textvariable=self.word_var, font=("NanumGothic", 24)).pack()
 
         self.answer_entry = ttk.Entry(root, font=("NanumGothic", 14))
@@ -64,6 +65,11 @@ class VocabularyQuizApp:
         user_input = self.answer_entry.get()
         if check_answer(self.current, user_input):
             self.score += 1
+            if self.score >= 20:
+                self.feedback_var.set("축하합니다. 20문제를 맞춰 프로그램을 종료합니다!")
+                self.root.after(1000, self.root.destroy)
+                return
+            
             self.feedback_var.set("정답입니다!")
         else:
             self.feedback_var.set(f"오답입니다. 정답: {self.current.meaning}")
